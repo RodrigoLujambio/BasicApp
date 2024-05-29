@@ -1,59 +1,18 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
-  StyleSheet,
   Text,
+  StyleSheet,
   useColorScheme,
+  TextInput,
+  Button,
   View,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {getJokes} from './api';
+import Card from './components/Card';
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -62,56 +21,97 @@ function App(): React.JSX.Element {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const [jokes, setJokes] = useState([] as any);
+  const [jokeFirstLine, setJokeFirstLine] = useState('');
+  const [jokeSecondLine, setJokeSecondLine] = useState('');
+
+  useEffect(() => {
+    const getJokesPayload = async () => {
+      const newJokes = await getJokes();
+      setJokes(newJokes.slice(0, 5));
+    };
+    getJokesPayload();
+  }, []);
+
+  const onFirstLineInputChange = (value: string) => {
+    setJokeFirstLine(value);
+  };
+
+  const onAddNewJokeHandler = () => {
+    let newJokes = [...jokes];
+    let newJoke = {
+      id: newJokes.length + 1,
+      setup: jokeFirstLine,
+      punchline: jokeSecondLine,
+    };
+    newJokes.push(newJoke);
+    setJokes(newJokes);
+    setJokeFirstLine('');
+    setJokeSecondLine('');
+  };
+
+  const onDeleteJokeHandler = (id: number) => {
+    const deleteIndex = jokes.map((j: any) => j.id).indexOf(id);
+    let newJokes = [...jokes];
+    newJokes.splice(deleteIndex, 1);
+    setJokes(newJokes);
+  };
+
   return (
     <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
+      <Text style={styles.h1}>My Unfunny Jokes List</Text>
+      <View style={styles.newJokeContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Put the first line of the joke"
+          value={jokeFirstLine}
+          onChangeText={onFirstLineInputChange}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Put the second line of the joke"
+          value={jokeSecondLine}
+          onChangeText={(value: string) => {
+            setJokeSecondLine(value);
+          }}
+        />
+        <Button title="Add new Joke" onPress={onAddNewJokeHandler} />
+      </View>
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
+        style={backgroundStyle}
+        contentContainerStyle={{alignItems: 'center'}}>
+        {jokes.map((j: any) => {
+          return (
+            <Card key={j.id} id={j.id} onPressHandler={onDeleteJokeHandler}>
+              <Text>{j.setup}</Text>
+              <Text style={{marginTop: 8}}>{j.punchline}</Text>
+            </Card>
+          );
+        })}
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
+  h1: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 8,
     fontSize: 24,
-    fontWeight: '600',
   },
-  sectionDescription: {
+  newJokeContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
     marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+    marginBottom: 8,
+    borderColor: 'gray',
+    borderWidth: 1,
+    padding: 8,
+    width: 250,
   },
 });
 
