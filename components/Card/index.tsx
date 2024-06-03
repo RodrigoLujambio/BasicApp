@@ -1,5 +1,5 @@
 import React, {ReactNode} from 'react';
-import {StyleSheet, View, Pressable} from 'react-native';
+import {StyleSheet, View, Pressable, Dimensions, Platform} from 'react-native';
 
 interface Props {
   children?: ReactNode;
@@ -20,13 +20,14 @@ const Card = ({children, id, onPressHandler}: Props) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'wheat',
+    backgroundColor: Platform.OS === 'ios' ? 'wheat' : 'coral',
     borderColor: 'black',
     borderRadius: 8,
     borderWidth: 1,
-    width: 200,
+    width: Dimensions.get('window').width <= 375 ? 200 : 350,
     padding: 8,
-    marginBottom: 8,
+    marginBottom: Dimensions.get('window').width <= 375 ? 8 : 24,
+    alignItems: Dimensions.get('window').width <= 375 ? 'flex-start' : 'center',
   },
 });
 

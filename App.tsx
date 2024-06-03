@@ -8,6 +8,7 @@ import {
   TextInput,
   Button,
   View,
+  Platform,
 } from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -60,6 +61,9 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaView style={backgroundStyle}>
       <Text style={styles.h1}>My Unfunny Jokes List</Text>
+      {Platform.OS === 'android' && (
+        <Text style={styles.h1}>Now on Android!</Text>
+      )}
       <View style={styles.newJokeContainer}>
         <TextInput
           style={styles.input}
