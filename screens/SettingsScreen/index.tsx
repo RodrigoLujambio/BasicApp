@@ -1,21 +1,21 @@
 import React from 'react';
 import {Text, StyleSheet, View, Button} from 'react-native';
 
-const DetailsScreen = ({route, navigation}) => {
-  const info = route.params.item;
+const SettingsScreen = ({navigation}) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.h1}>Details Screen</Text>
-      <Text>{info.setup}</Text>
-      <Text>{info.punchline}</Text>
+      <Text style={styles.h1}>My Setttings</Text>
+      <View style={styles.infoContainer}>
+        <Text>2FA: </Text>
+        <Text style={styles.statusText}>ON</Text>
+      </View>
       <View style={styles.infoContainer}>
         <Button
           title="Go Back"
           onPress={() => {
-            navigation.navigate('Main');
+            navigation.navigate('Profile');
           }}
         />
-        <Button title="Log Out" />
       </View>
     </View>
   );
@@ -24,7 +24,7 @@ const DetailsScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'wheat',
+    backgroundColor: 'beige',
     paddingVertical: 16,
     paddingHorizontal: 8,
   },
@@ -37,6 +37,10 @@ const styles = StyleSheet.create({
   infoContainer: {
     flexDirection: 'row',
   },
+  statusText: {
+    fontWeight: 'bold',
+    color: 'green',
+  },
 });
 
-export default DetailsScreen;
+export default SettingsScreen;
