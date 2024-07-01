@@ -1,9 +1,7 @@
 import React from 'react';
 
-import AppNavigator from './navigator';
-
 function App(): React.JSX.Element {
-  return <AppNavigator />;
+  return <></>;
 }
 
 export default App;
